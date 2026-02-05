@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>产品竞争力评估</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -21,7 +20,7 @@
         }
         
         .container {
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
@@ -35,11 +34,11 @@
         
         .main-content {
             display: grid;
-            grid-template-columns: 1fr 420px;
-            gap: 30px;
+            grid-template-columns: 1fr 380px;
+            gap: 25px;
         }
         
-        @media (max-width: 1200px) {
+        @media (max-width: 1100px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
@@ -64,7 +63,6 @@
             gap: 10px;
         }
         
-        /* 左侧 - 图表区域 */
         .chart-section {
             display: flex;
             flex-direction: column;
@@ -73,15 +71,14 @@
         
         .chart-container {
             position: relative;
-            height: 500px;
+            height: 480px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
-        /* 维度说明区域 */
         .dimension-legend {
-            margin-top: 20px;
+            margin-top: 15px;
             padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
@@ -115,12 +112,8 @@
             border-radius: 4px;
             font-weight: bold;
             font-size: 12px;
-            min-width: 30px;
+            min-width: 28px;
             text-align: center;
-        }
-        
-        .dimension-legend-item .name {
-            color: #333;
         }
         
         .stats-panel {
@@ -138,7 +131,7 @@
         }
         
         .stat-card .number {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
         }
         
@@ -147,65 +140,49 @@
             opacity: 0.9;
         }
         
-        /* 右侧 - 维度管理 */
         .dimension-panel {
-            max-height: 600px;
+            max-height: 420px;
             overflow-y: auto;
         }
         
         .dimension-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px;
-            margin-bottom: 10px;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
             background: #f8f9fa;
             border-radius: 10px;
             border-left: 4px solid #667eea;
-            transition: all 0.3s;
         }
         
-        .dimension-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        /* 缩写输入框 */
-        .abbr-input-large {
-            width: 80px;
-            min-width: 80px;
-            height: 44px;
+        .abbr-input {
+            width: 55px;
+            height: 38px;
             border: 2px solid #667eea;
-            border-radius: 8px;
+            border-radius: 6px;
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #667eea;
-            background: white;
-            padding: 0 5px;
         }
         
-        .abbr-input-large:focus {
+        .abbr-input:focus {
             outline: none;
             border-color: #764ba2;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
         
         .dimension-details {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
             min-width: 0;
         }
         
         .dimension-name-input {
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 8px 10px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s;
             width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 6px 8px;
+            font-size: 13px;
         }
         
         .dimension-name-input:focus {
@@ -213,42 +190,21 @@
             border-color: #667eea;
         }
         
-        .dimension-category {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            color: #888;
-        }
-        
-        .category-input {
-            border: none;
-            background: #e9ecef;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-size: 11px;
-            width: 60px;
-        }
-        
         .delete-btn {
             background: #ff6b6b;
             color: white;
             border: none;
-            border-radius: 6px;
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
+            border-radius: 5px;
+            width: 28px;
+            height: 28px;
             cursor: pointer;
-            font-size: 18px;
-            transition: all 0.2s;
+            font-size: 14px;
         }
         
         .delete-btn:hover {
             background: #ee5a5a;
-            transform: scale(1.1);
         }
         
-        /* 产品管理区域 */
         .product-section {
             margin-top: 20px;
             padding-top: 20px;
@@ -257,25 +213,25 @@
         
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
             margin-bottom: 15px;
         }
         
         .product-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px;
+            gap: 6px;
+            padding: 6px;
             background: #f8f9fa;
-            border-radius: 8px;
+            border-radius: 6px;
         }
         
         .color-picker {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
             padding: 0;
         }
@@ -284,7 +240,7 @@
             flex: 1;
             border: 1px solid #ddd;
             border-radius: 4px;
-            padding: 4px 8px;
+            padding: 4px 6px;
             font-size: 12px;
             min-width: 0;
         }
@@ -297,16 +253,15 @@
             width: 20px;
             height: 20px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
         }
         
-        /* 评分表格 */
         .score-section {
             margin-top: 20px;
         }
         
         .score-table-container {
-            max-height: 400px;
+            max-height: 350px;
             overflow: auto;
         }
         
@@ -332,18 +287,10 @@
             font-size: 12px;
         }
         
-        th:first-child {
-            text-align: center;
-            min-width: 100px;
-        }
-        
         td:first-child {
-            text-align: center;
             font-weight: bold;
             background: #f0f4ff;
             color: #667eea;
-            min-width: 100px;
-            white-space: nowrap;
         }
         
         input[type="number"] {
@@ -360,7 +307,6 @@
             border-color: #667eea;
         }
         
-        /* 按钮 */
         .btn-group {
             display: flex;
             gap: 10px;
@@ -369,7 +315,7 @@
         }
         
         .btn {
-            padding: 10px 18px;
+            padding: 10px 16px;
             border: none;
             border-radius: 8px;
             font-size: 13px;
@@ -396,22 +342,9 @@
             color: white;
         }
         
-        .btn-success:hover {
-            background: #218838;
-        }
-        
         .btn-secondary {
             background: #6c757d;
             color: white;
-        }
-        
-        .btn-warning {
-            background: #ffc107;
-            color: #333;
-        }
-        
-        .btn-warning:hover {
-            background: #e0a800;
         }
         
         .btn-sm {
@@ -419,7 +352,6 @@
             font-size: 12px;
         }
         
-        /* 同步提示 */
         .sync-indicator {
             display: inline-flex;
             align-items: center;
@@ -442,135 +374,26 @@
             50% { opacity: 0.5; }
         }
         
-        .mapping-hint {
-            background: #e8f5e9;
-            border: 1px solid #c8e6c9;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 15px;
-            font-size: 12px;
-            color: #2e7d32;
-        }
-        
-        /* Excel导入相关样式 */
-        .import-section {
-            background: #fff3cd;
-            border: 2px dashed #ffc107;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .import-section.dragover {
-            background: #ffeeba;
-            border-color: #ff9800;
-        }
-        
-        .import-section h4 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-        
-        .import-section p {
-            font-size: 12px;
-            color: #856404;
-            margin-bottom: 15px;
-        }
-        
-        .format-hint {
-            background: #e2e3e5;
-            border-radius: 6px;
-            padding: 10px;
-            margin-top: 10px;
-            font-size: 11px;
-            color: #383d41;
-            text-align: left;
-        }
-        
-        .format-hint code {
-            background: #fff;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: monospace;
-        }
-        
-        /* 预览弹窗 */
-        .modal-overlay {
-            display: none;
+        .toast {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-overlay.show {
-            display: flex;
-        }
-        
-        .modal {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        .modal h3 {
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .preview-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-bottom: 20px;
-        }
-        
-        .preview-table th,
-        .preview-table td {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        
-        .preview-table th {
-            background: #667eea;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: #28a745;
             color: white;
-        }
-        
-        .preview-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-        
-        .preview-info {
-            background: #d4edda;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
         }
         
-        .preview-info p {
-            margin: 5px 0;
-            font-size: 13px;
-            color: #155724;
+        .toast.error {
+            background: #dc3545;
         }
         
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
     </style>
 </head>
@@ -613,33 +436,15 @@
                         <canvas id="radarChart"></canvas>
                     </div>
                     
-                    <!-- 维度说明 -->
                     <div class="dimension-legend">
                         <h4>📋 维度说明</h4>
-                        <div class="dimension-legend-list" id="dimensionLegend">
-                            <!-- Generated by JS -->
-                        </div>
+                        <div class="dimension-legend-list" id="dimensionLegend"></div>
                     </div>
                 </div>
                 
                 <!-- 评分表格 -->
                 <div class="card score-section">
                     <h2>📝 评分矩阵</h2>
-                    
-                    <!-- Excel导入区域 -->
-                    <div class="import-section" id="dropZone">
-                        <h4>📥 导入Excel数据</h4>
-                        <p>拖拽Excel文件到此处，或点击按钮选择文件</p>
-                        <button class="btn btn-warning" onclick="document.getElementById('excelInput').click()">
-                            📂 选择Excel文件
-                        </button>
-                        <input type="file" id="excelInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleExcelImport(event)">
-                        <div class="format-hint">
-                            <strong>支持格式：</strong><br>
-                            第一行：<code>产品名</code> + 各维度标题（如 <code>$ 价格 (Price)</code>）<br>
-                            后续行：产品名 + 各维度评分
-                        </div>
-                    </div>
                     
                     <div class="score-table-container">
                         <table>
@@ -651,9 +456,8 @@
                     <div class="btn-group">
                         <button class="btn btn-primary" onclick="updateChart()">🔄 更新图表</button>
                         <button class="btn btn-secondary" onclick="exportImage()">📷 导出图片</button>
-                        <button class="btn btn-secondary" onclick="exportData()">💾 导出JSON</button>
-                        <button class="btn btn-success" onclick="exportExcel()">📊 导出Excel</button>
-                        <button class="btn btn-secondary" onclick="importData()">📂 导入JSON</button>
+                        <button class="btn btn-secondary" onclick="exportData()">💾 导出数据</button>
+                        <button class="btn btn-secondary" onclick="importData()">📂 导入数据</button>
                     </div>
                     <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFileImport(event)">
                 </div>
@@ -662,56 +466,29 @@
             <!-- 右侧 - 维度和产品管理 -->
             <div class="card">
                 <h2>
-                    评估维度
+                    ⚙️ 评估维度
                     <button class="btn btn-success btn-sm" onclick="addDimension()">➕ 添加</button>
                 </h2>
                 
-                <div class="mapping-hint">
-                    💡 <strong>缩写</strong>显示在雷达图和评分矩阵 | <strong>维度名称</strong>显示在图表下方说明
-                </div>
+                <div class="dimension-panel" id="dimensionPanel"></div>
                 
-                <div class="dimension-panel" id="dimensionPanel">
-                    <!-- Generated by JS -->
-                </div>
-                
-                <!-- 产品管理 -->
                 <div class="product-section">
                     <h3 style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
                         🏷️ 产品列表
                         <button class="btn btn-success btn-sm" onclick="addProduct()">➕ 添加</button>
                     </h3>
-                    <div class="product-grid" id="productGrid">
-                        <!-- Generated by JS -->
-                    </div>
+                    <div class="product-grid" id="productGrid"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 预览弹窗 -->
-    <div class="modal-overlay" id="previewModal">
-        <div class="modal">
-            <h3>📋 数据预览</h3>
-            <div class="preview-info" id="previewInfo"></div>
-            <div style="overflow:auto; max-height:400px;">
-                <table class="preview-table" id="previewTable"></table>
-            </div>
-            <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closePreview()">取消</button>
-                <button class="btn btn-primary" onclick="confirmImport()">✅ 确认导入</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // 颜色调色板
         const colorPalette = [
             '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', 
-            '#FF9F40', '#C9CBCF', '#7CFC00', '#FF1493', '#00CED1',
-            '#FFD700', '#8A2BE2', '#00FA9A', '#FF4500', '#1E90FF'
+            '#FF9F40', '#C9CBCF', '#7CFC00', '#FF1493', '#00CED1'
         ];
 
-        // 数据状态
         let state = {
             products: [
                 { name: '产品1', color: '#FF6384' },
@@ -723,21 +500,19 @@
                 { name: '产品7', color: '#C9CBCF' }
             ],
             dimensions: [
-                { name: '价格 (Price)', abbr: '$', category: '好价' },
-                { name: '综合成本 (Life Cycle Cost)', abbr: 'L', category: '好价' },
-                { name: '工业设计 (Industrial Design)', abbr: 'I', category: '好看' },
-                { name: '性能 (Performance)', abbr: 'P', category: '好抽' },
-                { name: '易用性 (Easy of Use)', abbr: 'E', category: '好用' },
-                { name: '保障 (Assurances)', abbr: 'A', category: '好用' },
-                { name: '社会接受度 (Social Acceptance)', abbr: 'S', category: '合规' }
+                { name: '价格 (Price)', abbr: '$' },
+                { name: '综合成本 (Life Cycle Cost)', abbr: 'L' },
+                { name: '工业设计 (Industrial Design)', abbr: 'I' },
+                { name: '性能 (Performance)', abbr: 'P' },
+                { name: '易用性 (Easy of Use)', abbr: 'E' },
+                { name: '保障 (Assurances)', abbr: 'A' },
+                { name: '社会接受度 (Social Acceptance)', abbr: 'S' }
             ],
             scores: []
         };
 
         let radarChart;
-        let pendingImportData = null; // 待导入的数据
 
-        // 初始化评分
         function initScores() {
             state.scores = [];
             for (let d = 0; d < state.dimensions.length; d++) {
@@ -748,291 +523,45 @@
             }
         }
 
-        // ==================== Excel导入功能 ====================
-        
-        // 设置拖拽区域
-        function setupDragDrop() {
-            const dropZone = document.getElementById('dropZone');
-            
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => {
-                    dropZone.classList.add('dragover');
-                }, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => {
-                    dropZone.classList.remove('dragover');
-                }, false);
-            });
-            
-            dropZone.addEventListener('drop', handleDrop, false);
-        }
-        
-        function handleDrop(e) {
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                processExcelFile(files[0]);
-            }
-        }
-        
-        function handleExcelImport(event) {
-            const file = event.target.files[0];
-            if (file) {
-                processExcelFile(file);
-            }
-            event.target.value = '';
-        }
-        
-        function processExcelFile(file) {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    // 获取第一个工作表
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    
-                    // 转换为JSON
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                    
-                    if (jsonData.length < 2) {
-                        alert('Excel文件数据不足，至少需要标题行和一行数据！');
-                        return;
-                    }
-                    
-                    // 解析数据
-                    parseExcelData(jsonData);
-                    
-                } catch (err) {
-                    console.error(err);
-                    alert('解析Excel文件失败：' + err.message);
-                }
-            };
-            
-            reader.readAsArrayBuffer(file);
-        }
-        
-        function parseExcelData(jsonData) {
-            const headerRow = jsonData[0];
-            const dataRows = jsonData.slice(1).filter(row => row.length > 0 && row[0]);
-            
-            // 解析维度（从第二列开始）
-            const dimensions = [];
-            for (let i = 1; i < headerRow.length; i++) {
-                const header = headerRow[i];
-                if (header) {
-                    const parsed = parseDimensionHeader(String(header));
-                    dimensions.push(parsed);
-                }
-            }
-            
-            // 解析产品和评分
-            const products = [];
-            const scores = dimensions.map(() => []);
-            
-            dataRows.forEach((row, rowIndex) => {
-                const productName = String(row[0] || `产品${rowIndex + 1}`);
-                products.push({
-                    name: productName,
-                    color: colorPalette[rowIndex % colorPalette.length]
-                });
-                
-                // 收集该产品的各维度评分
-                dimensions.forEach((dim, dimIndex) => {
-                    const score = parseFloat(row[dimIndex + 1]) || 0;
-                    scores[dimIndex].push(Math.min(10, Math.max(0, score)));
-                });
-            });
-            
-            // 保存待导入数据
-            pendingImportData = {
-                products,
-                dimensions,
-                scores
-            };
-            
-            // 显示预览
-            showPreview(pendingImportData, headerRow, dataRows);
-        }
-        
-        // 解析维度标题，提取缩写和名称
-        function parseDimensionHeader(header) {
-            // 尝试匹配格式: "缩写 名称" 或 "缩写 名称 (English)"
-            // 例如: "$ 价格 (Price)" -> abbr: "$", name: "价格 (Price)"
-            
-            const trimmed = header.trim();
-            
-            // 检查是否以特殊字符开头（作为缩写）
-            const specialChars = /^([^\s\u4e00-\u9fa5a-zA-Z0-9]+)\s+(.+)$/;
-            let match = trimmed.match(specialChars);
-            if (match) {
-                return {
-                    abbr: match[1],
-                    name: match[2],
-                    category: '自定义'
-                };
-            }
-            
-            // 检查是否以单个字母开头
-            const letterStart = /^([A-Za-z])\s+(.+)$/;
-            match = trimmed.match(letterStart);
-            if (match) {
-                return {
-                    abbr: match[1].toUpperCase(),
-                    name: match[2],
-                    category: '自定义'
-                };
-            }
-            
-            // 默认：取前2个字符作为缩写
-            return {
-                abbr: trimmed.substring(0, 2),
-                name: trimmed,
-                category: '自定义'
-            };
-        }
-        
-        function showPreview(data, headerRow, dataRows) {
-            const modal = document.getElementById('previewModal');
-            const info = document.getElementById('previewInfo');
-            const table = document.getElementById('previewTable');
-            
-            // 显示统计信息
-            info.innerHTML = `
-                <p>✅ <strong>识别到 ${data.products.length} 个产品</strong></p>
-                <p>✅ <strong>识别到 ${data.dimensions.length} 个评估维度</strong></p>
-                <p>📊 维度列表：${data.dimensions.map(d => d.abbr).join(', ')}</p>
-            `;
-            
-            // 生成预览表格
-            let tableHTML = '<thead><tr><th>产品名</th>';
-            data.dimensions.forEach(dim => {
-                tableHTML += `<th title="${dim.name}">${dim.abbr}</th>`;
-            });
-            tableHTML += '</tr></thead><tbody>';
-            
-            data.products.forEach((product, pIndex) => {
-                tableHTML += `<tr><td>${product.name}</td>`;
-                data.dimensions.forEach((dim, dIndex) => {
-                    tableHTML += `<td>${data.scores[dIndex][pIndex]}</td>`;
-                });
-                tableHTML += '</tr>';
-            });
-            tableHTML += '</tbody>';
-            
-            table.innerHTML = tableHTML;
-            modal.classList.add('show');
-        }
-        
-        function closePreview() {
-            document.getElementById('previewModal').classList.remove('show');
-            pendingImportData = null;
-        }
-        
-        function confirmImport() {
-            if (pendingImportData) {
-                state.products = pendingImportData.products;
-                state.dimensions = pendingImportData.dimensions;
-                state.scores = pendingImportData.scores;
-                
-                renderAll();
-                closePreview();
-                alert('✅ 数据导入成功！');
-            }
-        }
-        
-        // ==================== 导出Excel ====================
-        function exportExcel() {
-            // 构建表格数据
-            const header = ['产品名', ...state.dimensions.map(d => `${d.abbr} ${d.name}`)];
-            const rows = state.products.map((product, pIndex) => {
-                const row = [product.name];
-                state.dimensions.forEach((dim, dIndex) => {
-                    row.push(state.scores[dIndex]?.[pIndex] ?? 0);
-                });
-                return row;
-            });
-            
-            const wsData = [header, ...rows];
-            
-            // 创建工作表
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-            
-            // 设置列宽
-            ws['!cols'] = [
-                { wch: 15 },
-                ...state.dimensions.map(() => ({ wch: 30 }))
-            ];
-            
-            // 创建工作簿
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, '产品评估');
-            
-            // 导出
-            XLSX.writeFile(wb, '产品竞争力评估.xlsx');
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
 
-        // ==================== 维度说明 ====================
         function renderDimensionLegend() {
             const legend = document.getElementById('dimensionLegend');
             legend.innerHTML = state.dimensions.map(dim => `
                 <div class="dimension-legend-item">
                     <span class="abbr">${dim.abbr}</span>
-                    <span class="name">${dim.name}</span>
+                    <span>${dim.name}</span>
                 </div>
             `).join('');
         }
 
-        // ==================== 维度面板 ====================
         function renderDimensionPanel() {
             const panel = document.getElementById('dimensionPanel');
             panel.innerHTML = state.dimensions.map((dim, index) => `
                 <div class="dimension-item">
-                    <input type="text" 
-                           class="abbr-input-large" 
-                           value="${dim.abbr}" 
-                           maxlength="10"
-                           oninput="updateDimensionAbbr(${index}, this.value)"
-                           title="缩写（最多10个字符）">
+                    <input type="text" class="abbr-input" value="${dim.abbr}" maxlength="5"
+                           oninput="updateDimensionAbbr(${index}, this.value)">
                     <div class="dimension-details">
-                        <input type="text" 
-                               class="dimension-name-input" 
-                               value="${dim.name}"
+                        <input type="text" class="dimension-name-input" value="${dim.name}"
                                oninput="updateDimensionName(${index}, this.value)">
-                        <div class="dimension-category">
-                            分类: 
-                            <input type="text" 
-                                   class="category-input" 
-                                   value="${dim.category}"
-                                   onchange="updateDimensionCategory(${index}, this.value)">
-                        </div>
                     </div>
-                    <button class="delete-btn" onclick="deleteDimension(${index})" title="删除维度">✕</button>
+                    <button class="delete-btn" onclick="deleteDimension(${index})">✕</button>
                 </div>
             `).join('');
         }
 
         function updateDimensionAbbr(index, value) {
             state.dimensions[index].abbr = value;
-            
             if (radarChart) {
                 radarChart.data.labels = getChartLabels();
                 radarChart.update('none');
             }
-            
             renderScoreTable();
             renderDimensionLegend();
         }
@@ -1042,45 +571,30 @@
             renderDimensionLegend();
         }
 
-        function updateDimensionCategory(index, value) {
-            state.dimensions[index].category = value;
-        }
-
         function addDimension() {
             const newIndex = state.dimensions.length + 1;
-            state.dimensions.push({
-                name: `新维度${newIndex}`,
-                abbr: `D${newIndex}`,
-                category: '自定义'
-            });
+            state.dimensions.push({ name: `新维度${newIndex}`, abbr: `D${newIndex}` });
             state.scores.push(new Array(state.products.length).fill(5));
             renderAll();
         }
 
         function deleteDimension(index) {
             if (state.dimensions.length <= 3) {
-                alert('至少需要保留3个维度！');
+                showToast('至少需要保留3个维度！', true);
                 return;
             }
-            if (confirm(`确定删除维度"${state.dimensions[index].name}"？`)) {
-                state.dimensions.splice(index, 1);
-                state.scores.splice(index, 1);
-                renderAll();
-            }
+            state.dimensions.splice(index, 1);
+            state.scores.splice(index, 1);
+            renderAll();
         }
 
-        // ==================== 产品管理 ====================
         function renderProductGrid() {
             const grid = document.getElementById('productGrid');
             grid.innerHTML = state.products.map((product, index) => `
                 <div class="product-item">
-                    <input type="color" 
-                           class="color-picker" 
-                           value="${product.color}"
+                    <input type="color" class="color-picker" value="${product.color}"
                            onchange="updateProductColor(${index}, this.value)">
-                    <input type="text" 
-                           class="product-name-input" 
-                           value="${product.name}"
+                    <input type="text" class="product-name-input" value="${product.name}"
                            onchange="updateProductName(${index}, this.value)">
                     <button class="product-delete" onclick="deleteProduct(${index})">✕</button>
                 </div>
@@ -1110,17 +624,14 @@
 
         function deleteProduct(index) {
             if (state.products.length <= 1) {
-                alert('至少需要保留1个产品！');
+                showToast('至少需要保留1个产品！', true);
                 return;
             }
-            if (confirm(`确定删除"${state.products[index].name}"？`)) {
-                state.products.splice(index, 1);
-                state.scores.forEach(dimScores => dimScores.splice(index, 1));
-                renderAll();
-            }
+            state.products.splice(index, 1);
+            state.scores.forEach(dimScores => dimScores.splice(index, 1));
+            renderAll();
         }
 
-        // ==================== 评分表格 ====================
         function renderScoreTable() {
             const thead = document.getElementById('scoreTableHead');
             thead.innerHTML = `
@@ -1136,8 +647,7 @@
                     <td title="${dim.name}">${dim.abbr}</td>
                     ${state.products.map((_, pIndex) => `
                         <td>
-                            <input type="number" 
-                                   min="0" max="10" 
+                            <input type="number" min="0" max="10" 
                                    value="${state.scores[dIndex]?.[pIndex] ?? 5}"
                                    onchange="updateScore(${dIndex}, ${pIndex}, this.value)">
                         </td>
@@ -1153,16 +663,13 @@
             updateChart();
         }
 
-        // ==================== 图表 ====================
         function getChartLabels() {
             return state.dimensions.map(dim => dim.abbr);
         }
 
         function getDatasets() {
             return state.products.map((product, pIndex) => {
-                const data = state.dimensions.map((_, dIndex) => 
-                    state.scores[dIndex]?.[pIndex] ?? 0
-                );
+                const data = state.dimensions.map((_, dIndex) => state.scores[dIndex]?.[pIndex] ?? 0);
                 return {
                     label: product.name,
                     data: data,
@@ -1185,13 +692,9 @@
 
         function initChart() {
             const ctx = document.getElementById('radarChart').getContext('2d');
-            
             radarChart = new Chart(ctx, {
                 type: 'radar',
-                data: {
-                    labels: getChartLabels(),
-                    datasets: getDatasets()
-                },
+                data: { labels: getChartLabels(), datasets: getDatasets() },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -1200,37 +703,19 @@
                             beginAtZero: true,
                             max: 10,
                             min: 0,
-                            ticks: {
-                                stepSize: 2,
-                                font: { size: 11 }
-                            },
-                            pointLabels: {
-                                font: { 
-                                    size: 14, 
-                                    weight: 'bold' 
-                                },
-                                color: '#333'
-                            }
+                            ticks: { stepSize: 2, font: { size: 11 } },
+                            pointLabels: { font: { size: 14, weight: 'bold' }, color: '#333' }
                         }
                     },
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                usePointStyle: true,
-                                font: { size: 12 }
-                            }
+                            labels: { padding: 15, usePointStyle: true, font: { size: 12 } }
                         },
                         tooltip: {
                             callbacks: {
-                                title: function(context) {
-                                    const idx = context[0].dataIndex;
-                                    return state.dimensions[idx].name;
-                                },
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${context.raw}/10`;
-                                }
+                                title: (ctx) => state.dimensions[ctx[0].dataIndex].name,
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}/10`
                             }
                         }
                     }
@@ -1260,7 +745,6 @@
             }
         }
 
-        // ==================== 导入导出 ====================
         function exportImage() {
             const canvas = document.getElementById('radarChart');
             const link = document.createElement('a');
@@ -1292,19 +776,18 @@
                     if (imported.products && imported.dimensions && imported.scores) {
                         state = imported;
                         renderAll();
-                        alert('导入成功！');
+                        showToast('导入成功！');
                     } else {
-                        alert('文件格式错误！');
+                        showToast('文件格式错误！', true);
                     }
                 } catch (err) {
-                    alert('导入失败：' + err.message);
+                    showToast('导入失败：' + err.message, true);
                 }
             };
             reader.readAsText(file);
             event.target.value = '';
         }
 
-        // ==================== 渲染所有 ====================
         function renderAll() {
             renderDimensionPanel();
             renderProductGrid();
@@ -1313,16 +796,11 @@
             updateChart();
         }
 
-        // ==================== 初始化 ====================
         document.addEventListener('DOMContentLoaded', () => {
             initScores();
-            renderDimensionPanel();
-            renderProductGrid();
-            renderScoreTable();
-            renderDimensionLegend();
+            renderAll();
             initChart();
             updateStats();
-            setupDragDrop();
         });
     </script>
 </body>
