@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$LIPEAS 产品竞争力评估</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        th, td {
+            padding: 10px 6px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        th:first-child {
+            text-align: left;
+            min-width: 180px;
+        }
+        
+        td:first-child {
+            text-align: left;
+            font-weight: 500;
+            background: #f8f9fa;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+        }
+        
+        .dimension-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .dimension-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .dimension-input {
+            flex: 1;
+            padding: 6px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            background: transparent;
+            color: #333;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+        
+        .dimension-input:hover {
+            background: #f0f0f0;
+        }
+        
+        .dimension-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+        
+        .abbr-input {
+            width: 35px;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .category-input {
+            width: 50px;
+            padding: 2px 4px;
+            border: none;
+            background: transparent;
+            font-size: 10px;
+            color: #888;
+        }
+        
+        input[type="number"] {
+            width: 50px;
+            padding: 6px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .product-name-input {
+            width: 80px;
+            padding: 6px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            font-size: 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-align: center;
+        }
+        
+        .product-name-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .product-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 70px;
+        }
+        
+        .product-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+        
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            transition: all 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: #ee5a5a;
+            transform: scale(1.1);
+        }
+        
+        .legend-info {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .legend-info h4 {
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 13px;
+        }
+        
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 4px 10px 4px 0;
+            font-size: 11px;
+        }
+        
+        .abbr-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .edit-hint {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: #fff3cd;
+            border-radius: 6px;
+            border-left: 3px solid #ffc107;
+        }
+        
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .stat-card .label {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        
+        .color-picker {
+            width: 30px;
+            height: 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 产品竞争力评估模型</h1>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2>
+                    <span>📝 产品评分表</span>
+                    <div class="header-controls">
+                        <button class="btn btn-success btn-sm" onclick="addProduct()">➕ 添加产品</button>
+                        <button class="btn btn-warning btn-sm" onclick="addDimension()">➕ 添加维度</button>
+                    </div>
+                </h2>
+                <div class="edit-hint">
+                    💡 点击维度/产品名称可编辑 | 点击 ✕ 删除行/列 | 评分范围 0-10
+                </div>
+                <div class="table-container">
+                    <table id="scoreTable">
+                        <thead id="tableHead">
+                            <!-- Generated by JS -->
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="updateChart()">🔄 更新图表</button>
+                    <button class="btn btn-secondary" onclick="resetScores()">📊 重置评分</button>
+                    <button class="btn btn-secondary" onclick="resetAll()">🗑️ 全部重置</button>
+                    <button class="btn btn-secondary" onclick="exportImage()">📷 导出图片</button>
+                    <button class="btn btn-secondary" onclick="exportData()">💾 导出JSON</button>
+                    <button class="btn btn-secondary" onclick="importData()">📂 导入JSON</button>
+                </div>
+                <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFileImport(event)">
+            </div>
+            
+            <div class="card">
+                <h2>📈 竞争力雷达图</h2>
+                
+                <div class="stats-panel">
+                    <div class="stat-card">
+                        <div class="number" id="productCount">7</div>
+                        <div class="label">对比产品数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="dimensionCount">7</div>
+                        <div class="label">评估维度数</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+                
+                <div class="legend-info">
+                    <h4>维度说明</h4>
+                    <div id="dimensionLegend">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Color palette (expandable)
+        const colorPalette = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', 
+            '#FF9F40', '#C9CBCF', '#7CFC00', '#FF1493', '#00CED1',
+            '#FFD700', '#8A2BE2', '#00FA9A', '#FF4500', '#1E90FF',
+            '#32CD32', '#FF69B4', '#8B4513', '#4169E1', '#2E8B57'
+        ];
+
+        // Data state
+        let state = {
+            products: [
+                { name: '产品1', color: colorPalette[0] },
+                { name: '产品2', color: colorPalette[1] },
+                { name: '产品3', color: colorPalette[2] },
+                { name: '产品4', color: colorPalette[3] },
+                { name: '产品5', color: colorPalette[4] },
+                { name: '产品6', color: colorPalette[5] },
+                { name: '产品7', color: colorPalette[6] }
+            ],
+            dimensions: [
+                { name: '价格 (Price)', abbr: '$', category: '好价', icon: '💰' },
+                { name: '综合成本 (Life Cycle Cost)', abbr: 'L', category: '好价', icon: '🔄' },
+                { name: '工业设计 (Industrial Design)', abbr: 'I', category: '好看', icon: '🎨' },
+                { name: '性能 (Performance)', abbr: 'P', category: '好抽', icon: '⚡' },
+                { name: '易用性 (Easy of Use)', abbr: 'E', category: '好用', icon: '👆' },
+                { name: '保障 (Assurances)', abbr: 'A', category: '好用', icon: '🛡️' },
+                { name: '社会接受度 (Social Acceptance)', abbr: 'S', category: '合规', icon: '📋' }
+            ],
+            scores: [] // [dimension][product]
+        };
+
+        let radarChart;
+
+        // Initialize scores
+        function initScores() {
+            state.scores = [];
+            for (let d = 0; d < state.dimensions.length; d++) {
+                state.scores[d] = [];
+                for (let p = 0; p < state.products.length; p++) {
+                    state.scores[d][p] = Math.floor(Math.random() * 5) + 5; // Random 5-9
+                }
+            }
+        }
+
+        // Generate table header
+        function generateTableHead() {
+            const thead = document.getElementById('tableHead');
+            let html = '<tr><th>评估维度</th>';
+            
+            state.products.forEach((product, index) => {
+                html += `
+                    <th>
+                        <div class="product-header">
+                            <div style="display:flex; align-items:center; gap:4px;">
+                                <input type="color" class="color-picker" value="${product.color}" 
+                                    onchange="updateProductColor(${index}, this.value)">
+                                <button class="delete-btn" onclick="deleteProduct(${index})" title="删除产品">✕</button>
+                            </div>
+                            <input type="text" class="product-name-input" value="${product.name}" 
+                                onchange="updateProductName(${index}, this.value)">
+                        </div>
+                    </th>
+                `;
+            });
+            
+            html += '</tr>';
+            thead.innerHTML = html;
+        }
+
+        // Generate table body
+        function generateTableBody() {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+            
+            state.dimensions.forEach((dim, dIndex) => {
+                html += '<tr>';
+                
+                // Dimension cell
+                html += `
+                    <td>
+                        <div class="dimension-input-wrapper">
+                            <div class="dimension-row">
+                                <input type="text" class="abbr-input" value="${dim.abbr}" 
+                                    onchange="updateDimension(${dIndex}, 'abbr', this.value)" maxlength="3">
+                                <input type="text" class="dimension-input" value="${dim.icon} ${dim.name}" 
+                                    onchange="updateDimension(${dIndex}, 'name', this.value)">
+                                <button class="delete-btn" onclick="deleteDimension(${dIndex})" title="删除维度">✕</button>
+                            </div>
+                            <div style="font-size:10px; color:#888; margin-left:40px;">
+                                分类: <input type="text" class="category-input" value="${dim.category}" 
+                                    onchange="updateDimension(${dIndex}, 'category', this.value)">
+                            </div>
+                        </div>
+                    </td>
+                `;
+                
+                // Score cells
+                state.products.forEach((_, pIndex) => {
+                    const score = state.scores[dIndex]?.[pIndex] ?? 5;
+                    html += `
+                        <td>
+                            <input type="number" min="0" max="10" value="${score}" 
+                                onchange="updateScore(${dIndex}, ${pIndex}, this.value)">
+                        </td>
+                    `;
+                });
+                
+                html += '</tr>';
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        // Update functions
+        function updateProductName(index, value) {
+            state.products[index].name = value;
+            updateChart();
+        }
+
+        function updateProductColor(index, value) {
+            state.products[index].color = value;
+            updateChart();
+        }
+
+        function updateDimension(index, field, value) {
+            if (field === 'name') {
+                const iconMatch = value.match(/^(\p{Emoji})\s*/u);
+                if (iconMatch) {
+                    state.dimensions[index].icon = iconMatch[1];
+                    state.dimensions[index].name = value.replace(iconMatch[0], '');
+                } else {
+                    state.dimensions[index].name = value;
+                }
+            } else {
+                state.dimensions[index][field] = value;
+            }
+            updateChart();
+            updateLegend();
+        }
+
+        function updateScore(dIndex, pIndex, value) {
+            let score = parseFloat(value) || 0;
+            score = Math.min(10, Math.max(0, score));
+            state.scores[dIndex][pIndex] = score;
+            updateChart();
+        }
+
+        // Add/Delete functions
+        function addProduct() {
+            const newIndex = state.products.length;
+            const color = colorPalette[newIndex % colorPalette.length];
+            state.products.push({
+                name: `产品${newIndex + 1}`,
+                color: color
+            });
+            
+            // Add scores for new product
+            state.scores.forEach(dimScores => {
+                dimScores.push(5);
+            });
+            
+            rebuildTable();
+            updateChart();
+        }
+
+        function deleteProduct(index) {
+            if (state.products.length <= 1) {
+                alert('至少需要保留1个产品！');
+                return;
+            }
+            if (confirm(`确定删除"${state.products[index].name}"？`)) {
+                state.products.splice(index, 1);
+                state.scores.forEach(dimScores => {
+                    dimScores.splice(index, 1);
+                });
+                rebuildTable();
+                updateChart();
+            }
+        }
+
+        function addDimension() {
+            const newIndex = state.dimensions.length;
+            state.dimensions.push({
+                name: `新维度${newIndex + 1}`,
+                abbr: `D${newIndex + 1}`,
+                category: '自定义',
+                icon: '📌'
+            });
+            
+            // Add scores for new dimension
+            state.scores.push(new Array(state.products.length).fill(5));
+            
+            rebuildTable();
+            updateChart();
+        }
+
+        function deleteDimension(index) {
+            if (state.dimensions.length <= 3) {
+                alert('至少需要保留3个维度才能显示雷达图！');
+                return;
+            }
+            if (confirm(`确定删除维度"${state.dimensions[index].name}"？`)) {
+                state.dimensions.splice(index, 1);
+                state.scores.splice(index, 1);
+                rebuildTable();
+                updateChart();
+            }
+        }
+
+        function rebuildTable() {
+            generateTableHead();
+            generateTableBody();
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('productCount').textContent = state.products.length;
+            document.getElementById('dimensionCount').textContent = state.dimensions.length;
+        }
+
+        function updateLegend() {
+            const legend = document.getElementById('dimensionLegend');
+            legend.innerHTML = state.dimensions.map(dim => 
+                `<div class="legend-item">
+                    <span class="abbr-badge">${dim.abbr}</span>
+                    <span>${dim.icon} ${dim.name}</span>
+                    <span style="color:#888;">(${dim.category})</span>
+                </div>`
+            ).join('');
+        }
+
+        // Chart functions
+        function getLabels() {
+            return state.dimensions.map(dim => `${dim.icon} ${dim.abbr}`);
+        }
+
+        function getDatasets() {
+            return state.products.map((product, pIndex) => {
+                const data = state.dimensions.map((_, dIndex) => state.scores[dIndex]?.[pIndex] ?? 0);
+                const color = product.color;
+                return {
+                    label: product.name,
+                    data: data,
+                    backgroundColor: hexToRgba(color, 0.2),
+                    borderColor: color,
+                    borderWidth: 2,
+                    pointBackgroundColor: color,
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: color
+                };
+            });
+        }
+
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: getLabels(),
+                    datasets: getDatasets()
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 10,
+                            min: 0,
+                            ticks: {
+                                stepSize: 2,
+                                font: { size: 10 }
+                            },
+                            pointLabels: {
+                                font: { size: 12, weight: 'bold' }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 10,
+                                usePointStyle: true,
+                                font: { size: 11 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    const idx = context[0].dataIndex;
+                                    return state.dimensions[idx].name;
+                                },
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}/10`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            if (radarChart) {
+                radarChart.data.labels = getLabels();
+                radarChart.data.datasets = getDatasets();
+                radarChart.update();
+            }
+            updateStats();
+            updateLegend();
+        }
+
+        // Reset functions
+        function resetScores() {
+            if (confirm('确定重置所有评分为5？')) {
+                state.scores = state.scores.map(dimScores => 
+                    dimScores.map(() => 5)
+                );
+                rebuildTable();
+                updateChart();
+            }
+        }
+
+        function resetAll() {
+            if (confirm('确定恢复所有默认设置？')) {
+                location.reload();
+            }
+        }
+
+        // Export/Import functions
+        function exportImage() {
+            const canvas = document.getElementById('radarChart');
+            const link = document.createElement('a');
+            link.download = '产品竞争力雷达图.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.download = '产品评分数据.json';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+        }
+
+        function importData() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.products && imported.dimensions && imported.scores) {
+                        state = imported;
+                        rebuildTable();
+                        updateChart();
+                        alert('导入成功！');
+                    } else {
+                        alert('文件格式错误！');
+                    }
+                } catch (err) {
+                    alert('导入失败：' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initScores();
+            rebuildTable();
+            initChart();
+            updateLegend();
+        });
+    </script>
+</body>
+</html>
