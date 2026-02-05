@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>$LIPEAS 产品竞争力评估</title>
+    <title>产品竞争力评估</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -34,7 +34,7 @@
         
         .main-content {
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
+            grid-template-columns: 1fr 420px;
             gap: 30px;
         }
         
@@ -63,26 +63,260 @@
             gap: 10px;
         }
         
-        .header-controls {
+        /* 左侧 - 图表区域 */
+        .chart-section {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 20px;
         }
         
-        .table-container {
-            overflow-x: auto;
+        .chart-container {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 维度说明区域 */
+        .dimension-legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .dimension-legend h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .dimension-legend-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+        }
+        
+        .dimension-legend-item {
+            font-size: 13px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .dimension-legend-item .abbr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .dimension-legend-item .name {
+            color: #333;
+        }
+        
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .stat-card .label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        /* 右侧 - 维度管理 */
+        .dimension-panel {
             max-height: 600px;
             overflow-y: auto;
+        }
+        
+        .dimension-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+        
+        .dimension-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        /* 缩写输入框 */
+        .abbr-input-large {
+            width: 80px;
+            min-width: 80px;
+            height: 44px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #667eea;
+            background: white;
+            padding: 0 5px;
+        }
+        
+        .abbr-input-large:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        
+        .dimension-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+        
+        .dimension-name-input {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .dimension-name-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .dimension-category {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .category-input {
+            border: none;
+            background: #e9ecef;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 11px;
+            width: 60px;
+        }
+        
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: #ee5a5a;
+            transform: scale(1.1);
+        }
+        
+        /* 产品管理区域 */
+        .product-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #e0e0e0;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .color-picker {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .product-name-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            min-width: 0;
+        }
+        
+        .product-delete {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        /* 评分表格 */
+        .score-section {
+            margin-top: 20px;
+        }
+        
+        .score-table-container {
+            max-height: 400px;
+            overflow: auto;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 13px;
         }
         
         th, td {
-            padding: 10px 6px;
+            padding: 10px 8px;
             text-align: center;
             border: 1px solid #e0e0e0;
         }
@@ -94,74 +328,21 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            font-size: 12px;
         }
         
         th:first-child {
-            text-align: left;
-            min-width: 180px;
+            text-align: center;
+            min-width: 100px;
         }
         
         td:first-child {
-            text-align: left;
-            font-weight: 500;
-            background: #f8f9fa;
-            position: sticky;
-            left: 0;
-            z-index: 5;
-        }
-        
-        .dimension-input-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        
-        .dimension-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .dimension-input {
-            flex: 1;
-            padding: 6px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            background: transparent;
-            color: #333;
-            transition: all 0.3s;
-            min-width: 120px;
-        }
-        
-        .dimension-input:hover {
-            background: #f0f0f0;
-        }
-        
-        .dimension-input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-        }
-        
-        .abbr-input {
-            width: 35px;
-            padding: 4px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
             text-align: center;
-            font-size: 10px;
             font-weight: bold;
-        }
-        
-        .category-input {
-            width: 50px;
-            padding: 2px 4px;
-            border: none;
-            background: transparent;
-            font-size: 10px;
-            color: #888;
+            background: #f0f4ff;
+            color: #667eea;
+            min-width: 100px;
+            white-space: nowrap;
         }
         
         input[type="number"] {
@@ -171,7 +352,6 @@
             border-radius: 6px;
             text-align: center;
             font-size: 13px;
-            transition: all 0.3s;
         }
         
         input[type="number"]:focus {
@@ -179,56 +359,18 @@
             border-color: #667eea;
         }
         
-        .product-name-input {
-            width: 80px;
-            padding: 6px;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 6px;
-            font-size: 12px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            text-align: center;
-        }
-        
-        .product-name-input::placeholder {
-            color: rgba(255,255,255,0.7);
-        }
-        
-        .product-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            min-width: 70px;
-        }
-        
-        .product-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .chart-container {
-            position: relative;
-            height: 450px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
+        /* 按钮 */
         .btn-group {
             display: flex;
-            gap: 8px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 15px;
             flex-wrap: wrap;
         }
         
         .btn {
-            padding: 10px 16px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
@@ -253,135 +395,47 @@
             color: white;
         }
         
-        .btn-success:hover {
-            background: #218838;
-        }
-        
-        .btn-warning {
-            background: #ffc107;
-            color: #333;
-        }
-        
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-        
         .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-        
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-        
-        .btn-danger {
-            background: #dc3545;
+            background: #6c757d;
             color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c82333;
         }
         
         .btn-sm {
-            padding: 4px 8px;
-            font-size: 11px;
+            padding: 6px 12px;
+            font-size: 12px;
         }
         
-        .delete-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-            font-size: 14px;
-            line-height: 1;
-            transition: all 0.2s;
-        }
-        
-        .delete-btn:hover {
-            background: #ee5a5a;
-            transform: scale(1.1);
-        }
-        
-        .legend-info {
-            margin-top: 15px;
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        
-        .legend-info h4 {
-            margin-bottom: 8px;
-            color: #333;
-            font-size: 13px;
-        }
-        
-        .legend-item {
+        /* 同步提示 */
+        .sync-indicator {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            margin: 4px 10px 4px 0;
+            gap: 5px;
             font-size: 11px;
+            color: #28a745;
+            margin-left: 10px;
         }
         
-        .abbr-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 10px;
-            font-weight: bold;
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
         }
         
-        .edit-hint {
-            font-size: 11px;
-            color: #888;
-            margin-bottom: 12px;
-            padding: 8px;
-            background: #fff3cd;
-            border-radius: 6px;
-            border-left: 3px solid #ffc107;
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         
-        .stats-panel {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 12px;
+        .mapping-hint {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
             border-radius: 8px;
-            text-align: center;
-        }
-        
-        .stat-card .number {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        
-        .stat-card .label {
-            font-size: 11px;
-            opacity: 0.9;
-        }
-        
-        .color-picker {
-            width: 30px;
-            height: 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            padding: 0;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #2e7d32;
         }
     </style>
 </head>
@@ -390,60 +444,91 @@
         <h1>📊 产品竞争力评估模型</h1>
         
         <div class="main-content">
-            <div class="card">
-                <h2>
-                    <span>📝 产品评分表</span>
-                    <div class="header-controls">
-                        <button class="btn btn-success btn-sm" onclick="addProduct()">➕ 添加产品</button>
-                        <button class="btn btn-warning btn-sm" onclick="addDimension()">➕ 添加维度</button>
+            <!-- 左侧 - 图表和评分 -->
+            <div class="chart-section">
+                <div class="card">
+                    <h2>
+                        📈 竞争力雷达图
+                        <span class="sync-indicator">
+                            <span class="sync-dot"></span>
+                            实时同步
+                        </span>
+                    </h2>
+                    
+                    <div class="stats-panel">
+                        <div class="stat-card">
+                            <div class="number" id="productCount">7</div>
+                            <div class="label">产品数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="number" id="dimensionCount">7</div>
+                            <div class="label">维度数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="number" id="avgScore">-</div>
+                            <div class="label">平均分</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="number" id="maxScore">-</div>
+                            <div class="label">最高分</div>
+                        </div>
                     </div>
-                </h2>
-                <div class="edit-hint">
-                    💡 点击维度/产品名称可编辑 | 点击 ✕ 删除行/列 | 评分范围 0-10
-                </div>
-                <div class="table-container">
-                    <table id="scoreTable">
-                        <thead id="tableHead">
+                    
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                    
+                    <!-- 维度说明 -->
+                    <div class="dimension-legend">
+                        <h4>📋 维度说明</h4>
+                        <div class="dimension-legend-list" id="dimensionLegend">
                             <!-- Generated by JS -->
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Generated by JS -->
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="updateChart()">🔄 更新图表</button>
-                    <button class="btn btn-secondary" onclick="resetScores()">📊 重置评分</button>
-                    <button class="btn btn-secondary" onclick="resetAll()">🗑️ 全部重置</button>
-                    <button class="btn btn-secondary" onclick="exportImage()">📷 导出图片</button>
-                    <button class="btn btn-secondary" onclick="exportData()">💾 导出JSON</button>
-                    <button class="btn btn-secondary" onclick="importData()">📂 导入JSON</button>
+                <!-- 评分表格 -->
+                <div class="card score-section">
+                    <h2>📝 评分矩阵</h2>
+                    <div class="score-table-container">
+                        <table>
+                            <thead id="scoreTableHead"></thead>
+                            <tbody id="scoreTableBody"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="updateChart()">🔄 更新图表</button>
+                        <button class="btn btn-secondary" onclick="exportImage()">📷 导出图片</button>
+                        <button class="btn btn-secondary" onclick="exportData()">💾 导出数据</button>
+                        <button class="btn btn-secondary" onclick="importData()">📂 导入数据</button>
+                    </div>
+                    <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFileImport(event)">
                 </div>
-                <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFileImport(event)">
             </div>
             
+            <!-- 右侧 - 维度和产品管理 -->
             <div class="card">
-                <h2>📈 竞争力雷达图</h2>
+                <h2>
+                    评估维度
+                    <button class="btn btn-success btn-sm" onclick="addDimension()">➕ 添加</button>
+                </h2>
                 
-                <div class="stats-panel">
-                    <div class="stat-card">
-                        <div class="number" id="productCount">7</div>
-                        <div class="label">对比产品数</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="number" id="dimensionCount">7</div>
-                        <div class="label">评估维度数</div>
-                    </div>
+                <div class="mapping-hint">
+                    💡 <strong>缩写</strong>显示在雷达图和评分矩阵 | <strong>维度名称</strong>显示在图表下方说明
                 </div>
                 
-                <div class="chart-container">
-                    <canvas id="radarChart"></canvas>
+                <div class="dimension-panel" id="dimensionPanel">
+                    <!-- Generated by JS -->
                 </div>
                 
-                <div class="legend-info">
-                    <h4>维度说明</h4>
-                    <div id="dimensionLegend">
+                <!-- 产品管理 -->
+                <div class="product-section">
+                    <h3 style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                        🏷️ 产品列表
+                        <button class="btn btn-success btn-sm" onclick="addProduct()">➕ 添加</button>
+                    </h3>
+                    <div class="product-grid" id="productGrid">
                         <!-- Generated by JS -->
                     </div>
                 </div>
@@ -452,122 +537,156 @@
     </div>
 
     <script>
-        // Color palette (expandable)
+        // 颜色调色板
         const colorPalette = [
             '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', 
             '#FF9F40', '#C9CBCF', '#7CFC00', '#FF1493', '#00CED1',
-            '#FFD700', '#8A2BE2', '#00FA9A', '#FF4500', '#1E90FF',
-            '#32CD32', '#FF69B4', '#8B4513', '#4169E1', '#2E8B57'
+            '#FFD700', '#8A2BE2', '#00FA9A', '#FF4500', '#1E90FF'
         ];
 
-        // Data state
+        // 数据状态 - 已移除emoji
         let state = {
             products: [
-                { name: '产品1', color: colorPalette[0] },
-                { name: '产品2', color: colorPalette[1] },
-                { name: '产品3', color: colorPalette[2] },
-                { name: '产品4', color: colorPalette[3] },
-                { name: '产品5', color: colorPalette[4] },
-                { name: '产品6', color: colorPalette[5] },
-                { name: '产品7', color: colorPalette[6] }
+                { name: '产品1', color: '#FF6384' },
+                { name: '产品2', color: '#36A2EB' },
+                { name: '产品3', color: '#FFCE56' },
+                { name: '产品4', color: '#4BC0C0' },
+                { name: '产品5', color: '#9966FF' },
+                { name: '产品6', color: '#FF9F40' },
+                { name: '产品7', color: '#C9CBCF' }
             ],
             dimensions: [
-                { name: '价格 (Price)', abbr: '$', category: '好价', icon: '💰' },
-                { name: '综合成本 (Life Cycle Cost)', abbr: 'L', category: '好价', icon: '🔄' },
-                { name: '工业设计 (Industrial Design)', abbr: 'I', category: '好看', icon: '🎨' },
-                { name: '性能 (Performance)', abbr: 'P', category: '好抽', icon: '⚡' },
-                { name: '易用性 (Easy of Use)', abbr: 'E', category: '好用', icon: '👆' },
-                { name: '保障 (Assurances)', abbr: 'A', category: '好用', icon: '🛡️' },
-                { name: '社会接受度 (Social Acceptance)', abbr: 'S', category: '合规', icon: '📋' }
+                { name: '价格 (Price)', abbr: '$', category: '好价' },
+                { name: '综合成本 (Life Cycle Cost)', abbr: 'L', category: '好价' },
+                { name: '工业设计 (Industrial Design)', abbr: 'I', category: '好看' },
+                { name: '性能 (Performance)', abbr: 'P', category: '好抽' },
+                { name: '易用性 (Easy of Use)', abbr: 'E', category: '好用' },
+                { name: '保障 (Assurances)', abbr: 'A', category: '好用' },
+                { name: '社会接受度 (Social Acceptance)', abbr: 'S', category: '合规' }
             ],
-            scores: [] // [dimension][product]
+            scores: []
         };
 
         let radarChart;
 
-        // Initialize scores
+        // 初始化评分
         function initScores() {
             state.scores = [];
             for (let d = 0; d < state.dimensions.length; d++) {
                 state.scores[d] = [];
                 for (let p = 0; p < state.products.length; p++) {
-                    state.scores[d][p] = Math.floor(Math.random() * 5) + 5; // Random 5-9
+                    state.scores[d][p] = Math.floor(Math.random() * 4) + 5;
                 }
             }
         }
 
-        // Generate table header
-        function generateTableHead() {
-            const thead = document.getElementById('tableHead');
-            let html = '<tr><th>评估维度</th>';
-            
-            state.products.forEach((product, index) => {
-                html += `
-                    <th>
-                        <div class="product-header">
-                            <div style="display:flex; align-items:center; gap:4px;">
-                                <input type="color" class="color-picker" value="${product.color}" 
-                                    onchange="updateProductColor(${index}, this.value)">
-                                <button class="delete-btn" onclick="deleteProduct(${index})" title="删除产品">✕</button>
-                            </div>
-                            <input type="text" class="product-name-input" value="${product.name}" 
-                                onchange="updateProductName(${index}, this.value)">
-                        </div>
-                    </th>
-                `;
-            });
-            
-            html += '</tr>';
-            thead.innerHTML = html;
+        // ==================== 维度说明 ====================
+        function renderDimensionLegend() {
+            const legend = document.getElementById('dimensionLegend');
+            legend.innerHTML = state.dimensions.map(dim => `
+                <div class="dimension-legend-item">
+                    <span class="abbr">${dim.abbr}</span>
+                    <span class="name">${dim.name}</span>
+                </div>
+            `).join('');
         }
 
-        // Generate table body
-        function generateTableBody() {
-            const tbody = document.getElementById('tableBody');
-            let html = '';
-            
-            state.dimensions.forEach((dim, dIndex) => {
-                html += '<tr>';
-                
-                // Dimension cell
-                html += `
-                    <td>
-                        <div class="dimension-input-wrapper">
-                            <div class="dimension-row">
-                                <input type="text" class="abbr-input" value="${dim.abbr}" 
-                                    onchange="updateDimension(${dIndex}, 'abbr', this.value)" maxlength="3">
-                                <input type="text" class="dimension-input" value="${dim.icon} ${dim.name}" 
-                                    onchange="updateDimension(${dIndex}, 'name', this.value)">
-                                <button class="delete-btn" onclick="deleteDimension(${dIndex})" title="删除维度">✕</button>
-                            </div>
-                            <div style="font-size:10px; color:#888; margin-left:40px;">
-                                分类: <input type="text" class="category-input" value="${dim.category}" 
-                                    onchange="updateDimension(${dIndex}, 'category', this.value)">
-                            </div>
+        // ==================== 维度面板 ====================
+        function renderDimensionPanel() {
+            const panel = document.getElementById('dimensionPanel');
+            panel.innerHTML = state.dimensions.map((dim, index) => `
+                <div class="dimension-item">
+                    <input type="text" 
+                           class="abbr-input-large" 
+                           value="${dim.abbr}" 
+                           maxlength="10"
+                           oninput="updateDimensionAbbr(${index}, this.value)"
+                           title="缩写（最多10个字符）">
+                    <div class="dimension-details">
+                        <input type="text" 
+                               class="dimension-name-input" 
+                               value="${dim.name}"
+                               oninput="updateDimensionName(${index}, this.value)">
+                        <div class="dimension-category">
+                            分类: 
+                            <input type="text" 
+                                   class="category-input" 
+                                   value="${dim.category}"
+                                   onchange="updateDimensionCategory(${index}, this.value)">
                         </div>
-                    </td>
-                `;
-                
-                // Score cells
-                state.products.forEach((_, pIndex) => {
-                    const score = state.scores[dIndex]?.[pIndex] ?? 5;
-                    html += `
-                        <td>
-                            <input type="number" min="0" max="10" value="${score}" 
-                                onchange="updateScore(${dIndex}, ${pIndex}, this.value)">
-                        </td>
-                    `;
-                });
-                
-                html += '</tr>';
-            });
-            
-            tbody.innerHTML = html;
+                    </div>
+                    <button class="delete-btn" onclick="deleteDimension(${index})" title="删除维度">✕</button>
+                </div>
+            `).join('');
         }
 
-        // Update functions
+        // 更新维度缩写
+        function updateDimensionAbbr(index, value) {
+            state.dimensions[index].abbr = value;
+            
+            if (radarChart) {
+                radarChart.data.labels = getChartLabels();
+                radarChart.update('none');
+            }
+            
+            renderScoreTable();
+            renderDimensionLegend();
+        }
+
+        // 更新维度名称 - 同步到维度说明
+        function updateDimensionName(index, value) {
+            state.dimensions[index].name = value;
+            renderDimensionLegend();
+        }
+
+        function updateDimensionCategory(index, value) {
+            state.dimensions[index].category = value;
+        }
+
+        function addDimension() {
+            const newIndex = state.dimensions.length + 1;
+            state.dimensions.push({
+                name: `新维度${newIndex}`,
+                abbr: `D${newIndex}`,
+                category: '自定义'
+            });
+            state.scores.push(new Array(state.products.length).fill(5));
+            renderAll();
+        }
+
+        function deleteDimension(index) {
+            if (state.dimensions.length <= 3) {
+                alert('至少需要保留3个维度！');
+                return;
+            }
+            if (confirm(`确定删除维度"${state.dimensions[index].name}"？`)) {
+                state.dimensions.splice(index, 1);
+                state.scores.splice(index, 1);
+                renderAll();
+            }
+        }
+
+        // ==================== 产品管理 ====================
+        function renderProductGrid() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = state.products.map((product, index) => `
+                <div class="product-item">
+                    <input type="color" 
+                           class="color-picker" 
+                           value="${product.color}"
+                           onchange="updateProductColor(${index}, this.value)">
+                    <input type="text" 
+                           class="product-name-input" 
+                           value="${product.name}"
+                           onchange="updateProductName(${index}, this.value)">
+                    <button class="product-delete" onclick="deleteProduct(${index})">✕</button>
+                </div>
+            `).join('');
+        }
+
         function updateProductName(index, value) {
             state.products[index].name = value;
+            renderScoreTable();
             updateChart();
         }
 
@@ -576,45 +695,14 @@
             updateChart();
         }
 
-        function updateDimension(index, field, value) {
-            if (field === 'name') {
-                const iconMatch = value.match(/^(\p{Emoji})\s*/u);
-                if (iconMatch) {
-                    state.dimensions[index].icon = iconMatch[1];
-                    state.dimensions[index].name = value.replace(iconMatch[0], '');
-                } else {
-                    state.dimensions[index].name = value;
-                }
-            } else {
-                state.dimensions[index][field] = value;
-            }
-            updateChart();
-            updateLegend();
-        }
-
-        function updateScore(dIndex, pIndex, value) {
-            let score = parseFloat(value) || 0;
-            score = Math.min(10, Math.max(0, score));
-            state.scores[dIndex][pIndex] = score;
-            updateChart();
-        }
-
-        // Add/Delete functions
         function addProduct() {
             const newIndex = state.products.length;
-            const color = colorPalette[newIndex % colorPalette.length];
             state.products.push({
                 name: `产品${newIndex + 1}`,
-                color: color
+                color: colorPalette[newIndex % colorPalette.length]
             });
-            
-            // Add scores for new product
-            state.scores.forEach(dimScores => {
-                dimScores.push(5);
-            });
-            
-            rebuildTable();
-            updateChart();
+            state.scores.forEach(dimScores => dimScores.push(5));
+            renderAll();
         }
 
         function deleteProduct(index) {
@@ -624,84 +712,63 @@
             }
             if (confirm(`确定删除"${state.products[index].name}"？`)) {
                 state.products.splice(index, 1);
-                state.scores.forEach(dimScores => {
-                    dimScores.splice(index, 1);
-                });
-                rebuildTable();
-                updateChart();
+                state.scores.forEach(dimScores => dimScores.splice(index, 1));
+                renderAll();
             }
         }
 
-        function addDimension() {
-            const newIndex = state.dimensions.length;
-            state.dimensions.push({
-                name: `新维度${newIndex + 1}`,
-                abbr: `D${newIndex + 1}`,
-                category: '自定义',
-                icon: '📌'
-            });
+        // ==================== 评分表格 ====================
+        function renderScoreTable() {
+            const thead = document.getElementById('scoreTableHead');
+            thead.innerHTML = `
+                <tr>
+                    <th>维度</th>
+                    ${state.products.map(p => `<th>${p.name}</th>`).join('')}
+                </tr>
+            `;
             
-            // Add scores for new dimension
-            state.scores.push(new Array(state.products.length).fill(5));
-            
-            rebuildTable();
+            const tbody = document.getElementById('scoreTableBody');
+            tbody.innerHTML = state.dimensions.map((dim, dIndex) => `
+                <tr>
+                    <td title="${dim.name}">${dim.abbr}</td>
+                    ${state.products.map((_, pIndex) => `
+                        <td>
+                            <input type="number" 
+                                   min="0" max="10" 
+                                   value="${state.scores[dIndex]?.[pIndex] ?? 5}"
+                                   onchange="updateScore(${dIndex}, ${pIndex}, this.value)">
+                        </td>
+                    `).join('')}
+                </tr>
+            `).join('');
+        }
+
+        function updateScore(dIndex, pIndex, value) {
+            let score = parseFloat(value) || 0;
+            score = Math.min(10, Math.max(0, score));
+            state.scores[dIndex][pIndex] = score;
             updateChart();
         }
 
-        function deleteDimension(index) {
-            if (state.dimensions.length <= 3) {
-                alert('至少需要保留3个维度才能显示雷达图！');
-                return;
-            }
-            if (confirm(`确定删除维度"${state.dimensions[index].name}"？`)) {
-                state.dimensions.splice(index, 1);
-                state.scores.splice(index, 1);
-                rebuildTable();
-                updateChart();
-            }
-        }
-
-        function rebuildTable() {
-            generateTableHead();
-            generateTableBody();
-            updateStats();
-        }
-
-        function updateStats() {
-            document.getElementById('productCount').textContent = state.products.length;
-            document.getElementById('dimensionCount').textContent = state.dimensions.length;
-        }
-
-        function updateLegend() {
-            const legend = document.getElementById('dimensionLegend');
-            legend.innerHTML = state.dimensions.map(dim => 
-                `<div class="legend-item">
-                    <span class="abbr-badge">${dim.abbr}</span>
-                    <span>${dim.icon} ${dim.name}</span>
-                    <span style="color:#888;">(${dim.category})</span>
-                </div>`
-            ).join('');
-        }
-
-        // Chart functions
-        function getLabels() {
-            return state.dimensions.map(dim => `${dim.icon} ${dim.abbr}`);
+        // ==================== 图表 ====================
+        function getChartLabels() {
+            return state.dimensions.map(dim => dim.abbr);
         }
 
         function getDatasets() {
             return state.products.map((product, pIndex) => {
-                const data = state.dimensions.map((_, dIndex) => state.scores[dIndex]?.[pIndex] ?? 0);
-                const color = product.color;
+                const data = state.dimensions.map((_, dIndex) => 
+                    state.scores[dIndex]?.[pIndex] ?? 0
+                );
                 return {
                     label: product.name,
                     data: data,
-                    backgroundColor: hexToRgba(color, 0.2),
-                    borderColor: color,
+                    backgroundColor: hexToRgba(product.color, 0.2),
+                    borderColor: product.color,
                     borderWidth: 2,
-                    pointBackgroundColor: color,
+                    pointBackgroundColor: product.color,
                     pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: color
+                    pointRadius: 4
                 };
             });
         }
@@ -719,7 +786,7 @@
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: getLabels(),
+                    labels: getChartLabels(),
                     datasets: getDatasets()
                 },
                 options: {
@@ -732,10 +799,14 @@
                             min: 0,
                             ticks: {
                                 stepSize: 2,
-                                font: { size: 10 }
+                                font: { size: 11 }
                             },
                             pointLabels: {
-                                font: { size: 12, weight: 'bold' }
+                                font: { 
+                                    size: 14, 
+                                    weight: 'bold' 
+                                },
+                                color: '#333'
                             }
                         }
                     },
@@ -743,9 +814,9 @@
                         legend: {
                             position: 'bottom',
                             labels: {
-                                padding: 10,
+                                padding: 15,
                                 usePointStyle: true,
-                                font: { size: 11 }
+                                font: { size: 12 }
                             }
                         },
                         tooltip: {
@@ -766,32 +837,27 @@
 
         function updateChart() {
             if (radarChart) {
-                radarChart.data.labels = getLabels();
+                radarChart.data.labels = getChartLabels();
                 radarChart.data.datasets = getDatasets();
                 radarChart.update();
             }
             updateStats();
-            updateLegend();
         }
 
-        // Reset functions
-        function resetScores() {
-            if (confirm('确定重置所有评分为5？')) {
-                state.scores = state.scores.map(dimScores => 
-                    dimScores.map(() => 5)
-                );
-                rebuildTable();
-                updateChart();
+        function updateStats() {
+            document.getElementById('productCount').textContent = state.products.length;
+            document.getElementById('dimensionCount').textContent = state.dimensions.length;
+            
+            const allScores = state.scores.flat();
+            if (allScores.length > 0) {
+                const avg = (allScores.reduce((a, b) => a + b, 0) / allScores.length).toFixed(1);
+                const max = Math.max(...allScores);
+                document.getElementById('avgScore').textContent = avg;
+                document.getElementById('maxScore').textContent = max;
             }
         }
 
-        function resetAll() {
-            if (confirm('确定恢复所有默认设置？')) {
-                location.reload();
-            }
-        }
-
-        // Export/Import functions
+        // ==================== 导入导出 ====================
         function exportImage() {
             const canvas = document.getElementById('radarChart');
             const link = document.createElement('a');
@@ -803,7 +869,7 @@
         function exportData() {
             const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
-            link.download = '产品评分数据.json';
+            link.download = '产品评估数据.json';
             link.href = URL.createObjectURL(blob);
             link.click();
         }
@@ -822,8 +888,7 @@
                     const imported = JSON.parse(e.target.result);
                     if (imported.products && imported.dimensions && imported.scores) {
                         state = imported;
-                        rebuildTable();
-                        updateChart();
+                        renderAll();
                         alert('导入成功！');
                     } else {
                         alert('文件格式错误！');
@@ -836,12 +901,24 @@
             event.target.value = '';
         }
 
-        // Initialize
+        // ==================== 渲染所有 ====================
+        function renderAll() {
+            renderDimensionPanel();
+            renderProductGrid();
+            renderScoreTable();
+            renderDimensionLegend();
+            updateChart();
+        }
+
+        // ==================== 初始化 ====================
         document.addEventListener('DOMContentLoaded', () => {
             initScores();
-            rebuildTable();
+            renderDimensionPanel();
+            renderProductGrid();
+            renderScoreTable();
+            renderDimensionLegend();
             initChart();
-            updateLegend();
+            updateStats();
         });
     </script>
 </body>
