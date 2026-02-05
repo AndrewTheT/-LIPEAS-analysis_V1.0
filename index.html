@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>产品竞争力评估</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -395,9 +396,22 @@
             color: white;
         }
         
+        .btn-success:hover {
+            background: #218838;
+        }
+        
         .btn-secondary {
             background: #6c757d;
             color: white;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
         }
         
         .btn-sm {
@@ -436,6 +450,127 @@
             margin-bottom: 15px;
             font-size: 12px;
             color: #2e7d32;
+        }
+        
+        /* Excel导入相关样式 */
+        .import-section {
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .import-section.dragover {
+            background: #ffeeba;
+            border-color: #ff9800;
+        }
+        
+        .import-section h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .import-section p {
+            font-size: 12px;
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .format-hint {
+            background: #e2e3e5;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #383d41;
+            text-align: left;
+        }
+        
+        .format-hint code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        
+        /* 预览弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .modal h3 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .preview-table th,
+        .preview-table td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        .preview-table th {
+            background: #667eea;
+            color: white;
+        }
+        
+        .preview-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .preview-info {
+            background: #d4edda;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .preview-info p {
+            margin: 5px 0;
+            font-size: 13px;
+            color: #155724;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
         }
     </style>
 </head>
@@ -490,6 +625,22 @@
                 <!-- 评分表格 -->
                 <div class="card score-section">
                     <h2>📝 评分矩阵</h2>
+                    
+                    <!-- Excel导入区域 -->
+                    <div class="import-section" id="dropZone">
+                        <h4>📥 导入Excel数据</h4>
+                        <p>拖拽Excel文件到此处，或点击按钮选择文件</p>
+                        <button class="btn btn-warning" onclick="document.getElementById('excelInput').click()">
+                            📂 选择Excel文件
+                        </button>
+                        <input type="file" id="excelInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleExcelImport(event)">
+                        <div class="format-hint">
+                            <strong>支持格式：</strong><br>
+                            第一行：<code>产品名</code> + 各维度标题（如 <code>$ 价格 (Price)</code>）<br>
+                            后续行：产品名 + 各维度评分
+                        </div>
+                    </div>
+                    
                     <div class="score-table-container">
                         <table>
                             <thead id="scoreTableHead"></thead>
@@ -500,8 +651,9 @@
                     <div class="btn-group">
                         <button class="btn btn-primary" onclick="updateChart()">🔄 更新图表</button>
                         <button class="btn btn-secondary" onclick="exportImage()">📷 导出图片</button>
-                        <button class="btn btn-secondary" onclick="exportData()">💾 导出数据</button>
-                        <button class="btn btn-secondary" onclick="importData()">📂 导入数据</button>
+                        <button class="btn btn-secondary" onclick="exportData()">💾 导出JSON</button>
+                        <button class="btn btn-success" onclick="exportExcel()">📊 导出Excel</button>
+                        <button class="btn btn-secondary" onclick="importData()">📂 导入JSON</button>
                     </div>
                     <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFileImport(event)">
                 </div>
@@ -536,6 +688,21 @@
         </div>
     </div>
 
+    <!-- 预览弹窗 -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal">
+            <h3>📋 数据预览</h3>
+            <div class="preview-info" id="previewInfo"></div>
+            <div style="overflow:auto; max-height:400px;">
+                <table class="preview-table" id="previewTable"></table>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closePreview()">取消</button>
+                <button class="btn btn-primary" onclick="confirmImport()">✅ 确认导入</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 颜色调色板
         const colorPalette = [
@@ -544,7 +711,7 @@
             '#FFD700', '#8A2BE2', '#00FA9A', '#FF4500', '#1E90FF'
         ];
 
-        // 数据状态 - 已移除emoji
+        // 数据状态
         let state = {
             products: [
                 { name: '产品1', color: '#FF6384' },
@@ -568,6 +735,7 @@
         };
 
         let radarChart;
+        let pendingImportData = null; // 待导入的数据
 
         // 初始化评分
         function initScores() {
@@ -578,6 +746,243 @@
                     state.scores[d][p] = Math.floor(Math.random() * 4) + 5;
                 }
             }
+        }
+
+        // ==================== Excel导入功能 ====================
+        
+        // 设置拖拽区域
+        function setupDragDrop() {
+            const dropZone = document.getElementById('dropZone');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+            
+            dropZone.addEventListener('drop', handleDrop, false);
+        }
+        
+        function handleDrop(e) {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                processExcelFile(files[0]);
+            }
+        }
+        
+        function handleExcelImport(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processExcelFile(file);
+            }
+            event.target.value = '';
+        }
+        
+        function processExcelFile(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // 获取第一个工作表
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // 转换为JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    if (jsonData.length < 2) {
+                        alert('Excel文件数据不足，至少需要标题行和一行数据！');
+                        return;
+                    }
+                    
+                    // 解析数据
+                    parseExcelData(jsonData);
+                    
+                } catch (err) {
+                    console.error(err);
+                    alert('解析Excel文件失败：' + err.message);
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+        
+        function parseExcelData(jsonData) {
+            const headerRow = jsonData[0];
+            const dataRows = jsonData.slice(1).filter(row => row.length > 0 && row[0]);
+            
+            // 解析维度（从第二列开始）
+            const dimensions = [];
+            for (let i = 1; i < headerRow.length; i++) {
+                const header = headerRow[i];
+                if (header) {
+                    const parsed = parseDimensionHeader(String(header));
+                    dimensions.push(parsed);
+                }
+            }
+            
+            // 解析产品和评分
+            const products = [];
+            const scores = dimensions.map(() => []);
+            
+            dataRows.forEach((row, rowIndex) => {
+                const productName = String(row[0] || `产品${rowIndex + 1}`);
+                products.push({
+                    name: productName,
+                    color: colorPalette[rowIndex % colorPalette.length]
+                });
+                
+                // 收集该产品的各维度评分
+                dimensions.forEach((dim, dimIndex) => {
+                    const score = parseFloat(row[dimIndex + 1]) || 0;
+                    scores[dimIndex].push(Math.min(10, Math.max(0, score)));
+                });
+            });
+            
+            // 保存待导入数据
+            pendingImportData = {
+                products,
+                dimensions,
+                scores
+            };
+            
+            // 显示预览
+            showPreview(pendingImportData, headerRow, dataRows);
+        }
+        
+        // 解析维度标题，提取缩写和名称
+        function parseDimensionHeader(header) {
+            // 尝试匹配格式: "缩写 名称" 或 "缩写 名称 (English)"
+            // 例如: "$ 价格 (Price)" -> abbr: "$", name: "价格 (Price)"
+            
+            const trimmed = header.trim();
+            
+            // 检查是否以特殊字符开头（作为缩写）
+            const specialChars = /^([^\s\u4e00-\u9fa5a-zA-Z0-9]+)\s+(.+)$/;
+            let match = trimmed.match(specialChars);
+            if (match) {
+                return {
+                    abbr: match[1],
+                    name: match[2],
+                    category: '自定义'
+                };
+            }
+            
+            // 检查是否以单个字母开头
+            const letterStart = /^([A-Za-z])\s+(.+)$/;
+            match = trimmed.match(letterStart);
+            if (match) {
+                return {
+                    abbr: match[1].toUpperCase(),
+                    name: match[2],
+                    category: '自定义'
+                };
+            }
+            
+            // 默认：取前2个字符作为缩写
+            return {
+                abbr: trimmed.substring(0, 2),
+                name: trimmed,
+                category: '自定义'
+            };
+        }
+        
+        function showPreview(data, headerRow, dataRows) {
+            const modal = document.getElementById('previewModal');
+            const info = document.getElementById('previewInfo');
+            const table = document.getElementById('previewTable');
+            
+            // 显示统计信息
+            info.innerHTML = `
+                <p>✅ <strong>识别到 ${data.products.length} 个产品</strong></p>
+                <p>✅ <strong>识别到 ${data.dimensions.length} 个评估维度</strong></p>
+                <p>📊 维度列表：${data.dimensions.map(d => d.abbr).join(', ')}</p>
+            `;
+            
+            // 生成预览表格
+            let tableHTML = '<thead><tr><th>产品名</th>';
+            data.dimensions.forEach(dim => {
+                tableHTML += `<th title="${dim.name}">${dim.abbr}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+            
+            data.products.forEach((product, pIndex) => {
+                tableHTML += `<tr><td>${product.name}</td>`;
+                data.dimensions.forEach((dim, dIndex) => {
+                    tableHTML += `<td>${data.scores[dIndex][pIndex]}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody>';
+            
+            table.innerHTML = tableHTML;
+            modal.classList.add('show');
+        }
+        
+        function closePreview() {
+            document.getElementById('previewModal').classList.remove('show');
+            pendingImportData = null;
+        }
+        
+        function confirmImport() {
+            if (pendingImportData) {
+                state.products = pendingImportData.products;
+                state.dimensions = pendingImportData.dimensions;
+                state.scores = pendingImportData.scores;
+                
+                renderAll();
+                closePreview();
+                alert('✅ 数据导入成功！');
+            }
+        }
+        
+        // ==================== 导出Excel ====================
+        function exportExcel() {
+            // 构建表格数据
+            const header = ['产品名', ...state.dimensions.map(d => `${d.abbr} ${d.name}`)];
+            const rows = state.products.map((product, pIndex) => {
+                const row = [product.name];
+                state.dimensions.forEach((dim, dIndex) => {
+                    row.push(state.scores[dIndex]?.[pIndex] ?? 0);
+                });
+                return row;
+            });
+            
+            const wsData = [header, ...rows];
+            
+            // 创建工作表
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            
+            // 设置列宽
+            ws['!cols'] = [
+                { wch: 15 },
+                ...state.dimensions.map(() => ({ wch: 30 }))
+            ];
+            
+            // 创建工作簿
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, '产品评估');
+            
+            // 导出
+            XLSX.writeFile(wb, '产品竞争力评估.xlsx');
         }
 
         // ==================== 维度说明 ====================
@@ -620,7 +1025,6 @@
             `).join('');
         }
 
-        // 更新维度缩写
         function updateDimensionAbbr(index, value) {
             state.dimensions[index].abbr = value;
             
@@ -633,7 +1037,6 @@
             renderDimensionLegend();
         }
 
-        // 更新维度名称 - 同步到维度说明
         function updateDimensionName(index, value) {
             state.dimensions[index].name = value;
             renderDimensionLegend();
@@ -919,6 +1322,7 @@
             renderDimensionLegend();
             initChart();
             updateStats();
+            setupDragDrop();
         });
     </script>
 </body>
